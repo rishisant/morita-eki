@@ -361,6 +361,15 @@
   .choice{position:relative; flex:none}
   .choice:not(:last-child)::after{content:""; position:absolute; left:1.7rem; bottom:0;
     width:52%; height:1px; background:rgba(239,233,214,.26)}
+
+  /* ---- chat overlay unboxed + close-button breathing room ---- */
+  #modal.phone{background:none !important; border:none !important;
+    box-shadow:none !important; padding:0 !important; gap:1rem !important}
+  #modal.phone .btn.ghost{padding:.55rem 2.2rem; font-size:.9rem}
+  #modal{gap:1.05rem}
+  #modal > .btn.ghost{margin-top:.2rem; padding:.55rem 2.2rem; font-size:.9rem}
+  #chatlog{padding-bottom:.9rem}
+  #linepanel{border-radius:18px}
 </style>
 
 <div id="app">
