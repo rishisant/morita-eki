@@ -248,6 +248,14 @@
   .btn.ghost:hover{background:rgba(60,70,90,.85); border-color:#fff}
   .choice{color:#fff; font-weight:500; border-color:rgba(255,255,255,.3)}
   #titleright .btnrow{gap:1rem}
+
+  /* ---- layout collision + focus ring fix ---- */
+  #hud{padding-left:5.6rem; padding-right:1.2rem}
+  #menu{bottom:1rem}
+  #menubtn{outline:none}
+  #menubtn:focus{outline:none}
+  #menubtn:focus-visible{outline:2px solid var(--neon); outline-offset:3px}
+  #choices{max-width:calc(100vw - 8rem)}
 </style>
 
 <div id="app">
@@ -634,7 +642,7 @@ const NODES = {
 /* ---------------- engine ---------------- */
 const bgimg=$("bg"), storybox=$("storybox"), choicesEl=$("choices");
 const menuEl=$("menu"), menubtn=$("menubtn");
-menubtn.onclick=()=>{ blip(660); menuEl.classList.toggle("open"); menubtn.classList.remove("ready"); };
+menubtn.onclick=()=>{ blip(660); menuEl.classList.toggle("open"); menubtn.classList.remove("ready"); menubtn.blur(); };
 let current=null;
 function go(id){
   if(id==="__chat"){ openChat(); return; }
