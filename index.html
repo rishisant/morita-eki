@@ -270,6 +270,17 @@
   #menubtn:focus{outline:none}
   #menubtn:focus-visible{outline:2px solid var(--neon); outline-offset:3px}
   #choices{max-width:calc(100vw - 8rem)}
+
+  /* ---- chat mobile fit fix ---- */
+  #modal.phone{width:auto; max-width:96vw; max-height:none; overflow:visible; padding:0}
+  #linepanel{width:min(620px, 92vw); height:min(64vh, 470px)}
+  #modal.phone .btn.ghost{padding:.5rem 1.8rem; font-size:.85rem; margin-top:.1rem}
+  @media (max-height:500px){
+    #linepanel{height:70vh}
+    .bub{font-size:.85rem}
+    #chathead{font-size:.85rem; padding:.5rem .8rem}
+    #inputbar .field{font-size:.72rem}
+  }
 </style>
 
 <div id="app">
