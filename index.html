@@ -336,6 +336,16 @@
   /* calm the modern flourishes */
   #bg{animation:none}
   #locchip{letter-spacing:.2em}
+
+  /* ---- persistent command window layout ---- */
+  #hud{padding:2.2rem 1.2rem 1rem; align-items:flex-start; pointer-events:none;
+    display:flex; flex-direction:column; gap:.55rem}
+  #storybox{pointer-events:auto; transition:opacity .25s}
+  #choices{position:static !important; opacity:1 !important; translate:0 0 !important;
+    pointer-events:auto !important; width:fit-content; min-width:13rem}
+  #choices:empty{display:none !important; border:none !important}
+  #hud:has(#choices:hover) #storybox{opacity:.32}
+  #menu,#menubtn{display:none !important}
 </style>
 
 <div id="app">
@@ -377,9 +387,6 @@
     <div id="locchip"></div>
     <div id="hud">
       <div id="storybox"></div>
-    </div>
-    <div id="menu">
-      <button id="menubtn" aria-label="こうどうをえらぶ">コマンド</button>
       <div id="choices"></div>
     </div>
   </div>
@@ -757,8 +764,7 @@ const NODES = {
 
 /* ---------------- engine ---------------- */
 const bgimg=$("bg"), storybox=$("storybox"), choicesEl=$("choices");
-const menuEl=$("menu"), menubtn=$("menubtn");
-menubtn.onclick=()=>{ blip(660); menuEl.classList.toggle("open"); menubtn.classList.remove("ready"); menubtn.blur(); };
+
 let current=null;
 function go(id){
   if(id==="__chat"){ openChat(); return; }
@@ -783,11 +789,9 @@ function go(id){
       const b=document.createElement("button");
       b.className="choice";
       b.innerHTML=`<span class="arr">▸</span>${label}`;
-      b.onclick=()=>{ blip(880); menuEl.classList.remove("open"); go(dest); };
+      b.onclick=()=>{ blip(880); go(dest); };
       choicesEl.appendChild(b);
     }
-    menuEl.classList.remove("open");
-    menubtn.classList.add("ready");
   };
   typeText(storybox, buildChoices);
 }
