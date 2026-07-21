@@ -26,7 +26,9 @@
   #titlebg::after{content:""; position:absolute; inset:0;
     background:radial-gradient(ellipse at 50% 40%, rgba(11,14,21,.25) 30%, rgba(11,14,21,.9) 100%)}
   #title > *{animation:tin 1s ease-out backwards}
-  #title .mark{animation-delay:.1s} #title h1{animation-delay:.35s}
+  #logo{line-height:0}
+  #logo svg{width:min(430px,82vw); height:auto; filter:drop-shadow(0 10px 34px rgba(0,0,0,.5))}
+  #logo{animation-delay:.2s}
   #title .lead{animation-delay:.7s} #title .btn{animation-delay:1.1s}
   @keyframes tin{from{opacity:0; translate:0 14px}}
   #title .mark{animation:tin 1s ease-out .1s backwards, markflick 6s linear 2s infinite}
@@ -210,8 +212,21 @@
 <div id="app">
   <div id="title">
     <div id="titlebg"></div>
-    <div class="mark">駅</div>
-    <h1>森田駅からの脱出<small>MORITA STATION</small></h1>
+    <div id="logo"><svg id="logosvg" viewBox="0 0 640 400" role="img" aria-label="森田駅からの脱出">
+  <defs><clipPath id="lgclip"><rect x="20" y="20" width="600" height="360" rx="42"/></clipPath></defs>
+  <g clip-path="url(#lgclip)">
+    <rect x="20" y="20" width="600" height="360" fill="#f5f1e6"/>
+    <rect x="20" y="302" width="600" height="78" fill="#1d5c3d"/>
+  </g>
+  <text x="320" y="152" text-anchor="middle" font-family="&#39;Noto Sans JP&#39;,sans-serif" font-weight="700" font-size="76" fill="#17181a">森田駅からの</text>
+  <text x="258" y="262" text-anchor="middle" font-family="&#39;Noto Sans JP&#39;,sans-serif" font-weight="700" font-size="86" fill="#17181a">脱出</text>
+  <g transform="translate(438,226)">
+    <path d="M0,-24 C-14,-42 -42,-34 -42,-10 C-42,10 -22,26 0,42 C22,26 42,10 42,-10 C42,-34 14,-42 0,-24 Z" fill="#c8737f"/>
+    <circle cx="0" cy="-2" r="8" fill="#17181a"/>
+    <path d="M-5,2 L5,2 L9,22 L-9,22 Z" fill="#17181a"/>
+  </g>
+  <text x="320" y="354" text-anchor="middle" font-family="&#39;Noto Sans JP&#39;,sans-serif" font-weight="500" font-size="28" letter-spacing="9" fill="#efe9d0">MORITA STATION</text>
+</svg></div>
     <p class="lead">終電が行ってしまった夜。<br>気がつくと、森田駅にはだれもいない。<br>アナウンスは流れない。<b>電車は、来ない。</b><br>改札は——開かない。<br><br>そして、ポケットにスマホがない。</p>
     <button class="btn" id="startBtn">目をさます</button>
   </div>
