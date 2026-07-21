@@ -473,7 +473,7 @@
    ================================================================ */
 const CONFIG = {
   herName: "紗季",
-  bfName: "理志",
+  bfName: "りっちゃん",         // 彼女からの呼び名(LINE表示名・地の文で使用)
   finalCode: "0719",           // ★ 2026年7月19日 — りしが来た日
   codeHint: "ふたりの、はじまりの日", // 最後のヒント(暗号めかす)
   finalMessage: [              // ★ 改札のむこうで渡す手紙(自由に書きかえてOK)
@@ -673,7 +673,7 @@ const NODES = {
   getPhone:{ img:"benchclose_nophone", enter(){
       F.hasPhone=true;
       F.chat.push({sys:1,t:"22:47"},
-        {me:1,read:1,t:"理志、いまいい？"},
+        {me:1,read:1,t:"りっちゃん、いまいい？"},
         {me:1,read:1,t:"へんなこと言うけど……気づいたら森田駅にいた"},
         {me:1,read:1,t:"どうやって来たのか、記憶がない",time:"22:47"},
         {me:1,read:1,t:"駅にはだれもいない。こわい"},
@@ -939,7 +939,7 @@ function tryGate(){
 function ending(){
   $("endTitle").textContent="改札のむこうに、"+CONFIG.bfName+"が立っていた。";
   $("letter").innerHTML=CONFIG.finalMessage.map(l=>`<p>${l||"&nbsp;"}</p>`).join("")
-    +`<p style="text-align:right;margin-top:1.2rem">— ${CONFIG.bfName}</p>`;
+    +`<p style="text-align:right;margin-top:1.2rem">— 理志</p>`;
   $("ending").classList.add("on");
   startPetals();
 }
