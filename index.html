@@ -105,7 +105,7 @@
   #rotate{display:none; position:fixed; inset:0; z-index:40; background:var(--ink);
     flex-direction:column; align-items:center; justify-content:center; gap:1rem;
     font-family:var(--serif); letter-spacing:.15em; text-align:center; line-height:2}
-  #rotate .ph{font-size:2.4rem; animation:rot 1.8s ease-in-out infinite}
+  #rotate .ph{font-size:2.4rem; line-height:0; color:var(--neon); animation:rot 1.8s ease-in-out infinite}
   @keyframes rot{0%,20%{transform:rotate(0)}55%,100%{transform:rotate(90deg)}}
   @media (orientation:portrait){ #rotate{display:flex} }
   @media (prefers-reduced-motion: reduce){ #rotate .ph{animation:none} }
@@ -346,6 +346,11 @@
   #choices:empty{display:none !important; border:none !important}
   #hud:has(#choices:hover) #storybox{opacity:.32}
   #menu,#menubtn{display:none !important}
+
+  .ficon{width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round; vertical-align:-.12em}
+  .ficon.fill{fill:currentColor; stroke:none}
+  #chathead .ficon{opacity:.85}
 </style>
 
 <div id="app">
@@ -369,7 +374,7 @@
       <p class="lead">終電が行ってしまった夜。<br>気がつくと、森田駅にはだれもいない。<br><b>電車は、来ない。</b>改札は——開かない。<br>そして、ポケットにスマホがない。</p>
       <div class="btnrow">
         <button class="btn" id="startBtn">目をさます</button>
-        <button class="btn ghost" id="optBtn">⚙ せってい</button>
+        <button class="btn ghost" id="optBtn"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> せってい</button>
       </div>
     </div>
   </div>
@@ -378,9 +383,9 @@
     <div id="gamebar">
       <span class="gt">森田駅 — MORITA STATION</span>
       <span style="display:flex; gap:.5rem; pointer-events:auto">
-        <button id="gearbtn" aria-label="せってい">⚙</button>
-        <button id="mutebtn" aria-label="おと">🔊</button>
-        <button id="phonebtn">📱 スマホ<span class="badge"></span></button>
+        <button id="gearbtn" aria-label="せってい"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+        <button id="mutebtn" aria-label="おと"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
+        <button id="phonebtn"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> スマホ<span class="badge"></span></button>
       </span>
     </div>
     <div id="stage"><img id="bg" alt="駅のようす"><div id="vig"></div><div id="grain"></div></div>
@@ -391,7 +396,7 @@
     </div>
   </div>
 
-  <div id="rotate"><span class="ph">📱</span>よこ向きにして<br>あそんでね</div>
+  <div id="rotate"><span class="ph"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>よこ向きにして<br>あそんでね</div>
 
   <div id="voiceover"><div class="vicon"></div><div id="vcaption"></div><div class="vhint">タップでとじる</div></div>
 
@@ -414,7 +419,7 @@
    ================================================================ */
 const CONFIG = {
   herName: "紗季",
-  bfName: "りし",
+  bfName: "理志",
   finalCode: "0719",           // ★ 2026年7月19日 — りしが来た日
   codeHint: "ふたりの、はじまりの日", // 最後のヒント(暗号めかす)
   finalMessage: [              // ★ 改札のむこうで渡す手紙(自由に書きかえてOK)
@@ -481,7 +486,7 @@ const AVATAR_HTML = AVATAR_SRC && !AVATAR_SRC.includes("{{") ? `<img src="${AVAT
 function bubbleRow(m){
   if(m.sys) return `<div class="bub sys">${m.t}</div>`;
   if(m.voice) return `<div class="crow yo"><span class="avatar">${AVATAR_HTML}</span>
-    <div class="bub yo voice" onclick="playVoice('${m.voice}')"><span class="play">▶</span>
+    <div class="bub yo voice" onclick="playVoice('${m.voice}')"><span class="play"><svg class="ficon fill" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
     <span class="wave">▮▯▮▮▯▮▯▮</span> ${CONFIG[m.voice].duration}</div></div>`;
   if(m.me) return `<div class="crow me"><span class="meta">${m.read?"Read":""}${m.time?"<br>"+m.time:""}</span>
     <div class="bub me">${m.t}</div></div>`;
@@ -492,9 +497,9 @@ function openChat(){
   F.unread=0; $("phonebtn").classList.remove("unread");
   shade.classList.add("phone"); modal.classList.add("phone");
   openModal(`<div id="linepanel">
-      <div id="chathead"><span class="back">◀</span> ${CONFIG.bfName} 🐈‍⬛<span class="hd-icons">☎ ≡</span></div>
+      <div id="chathead"><span class="back"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></span> ${CONFIG.bfName}<span class="hd-icons"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span></div>
       <div id="chatlog">${F.chat.map(bubbleRow).join("")}</div>
-      <div id="inputbar"><span class="field">メッセージを入力</span><span class="mic">🎤</span></div>
+      <div id="inputbar"><span class="field">メッセージを入力</span><span class="mic"><svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span></div>
     </div>`);
   const log=$("chatlog"); if(log) log.scrollTop=log.scrollHeight;
 }
@@ -600,7 +605,7 @@ const NODES = {
   getPhone:{ img:"benchclose_nophone", enter(){
       F.hasPhone=true;
       F.chat.push({sys:1,t:"22:47"},
-        {me:1,read:1,t:"りし、いまいい？"},
+        {me:1,read:1,t:"理志、いまいい？"},
         {me:1,read:1,t:"へんなこと言うけど……気づいたら森田駅にいた"},
         {me:1,read:1,t:"どうやって来たのか、記憶がない",time:"22:47"},
         {me:1,read:1,t:"駅にはだれもいない。こわい"},
@@ -957,7 +962,7 @@ function blip(f){
 }
 $("mutebtn").onclick=()=>{
   sndOn=!sndOn; applyOpt();
-  $("mutebtn").textContent=sndOn?"🔊":"🔇";
+  $("mutebtn").innerHTML=sndOn?`<svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`:`<svg class="ficon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
 };
 $("optBtn").onclick=()=>{ audioInit(); openOptions(); };
 $("gearbtn").onclick=()=>openOptions();
