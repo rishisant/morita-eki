@@ -351,6 +351,16 @@
     stroke-linecap:round; stroke-linejoin:round; vertical-align:-.12em}
   .ficon.fill{fill:currentColor; stroke:none}
   #chathead .ficon{opacity:.85}
+
+  /* ---- fixed-size command window + partial separators ---- */
+  #choices{width:min(21rem, calc(100vw - 2.4rem)) !important;
+    min-width:0 !important; height:12rem; overflow-y:auto;
+    justify-content:flex-start; scrollbar-width:thin;
+    scrollbar-color:rgba(239,233,214,.35) transparent}
+  #choices:empty{height:0}
+  .choice{position:relative; flex:none}
+  .choice:not(:last-child)::after{content:""; position:absolute; left:1.7rem; bottom:0;
+    width:52%; height:1px; background:rgba(239,233,214,.26)}
 </style>
 
 <div id="app">
