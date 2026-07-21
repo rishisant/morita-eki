@@ -512,7 +512,7 @@ const IMG = {
 const F = {
   hasPhone:false, hasCoin:false, hasKey:false, hasMemo:false, chestOpen:false,
   sawVending:false, sawBoard:false, lockerOpen:false,
-  hasTicket:false,
+  hasTicket:false, hasBottle:false, hasMarble:false, marbleSet:false,
   chat:[], unread:0,
 };
 const LOCKER_CODE = "2";
@@ -727,11 +727,11 @@ const NODES = {
     ].filter(Boolean)},
 
   vendBuy:{ img:"vendclose", enter(){
-      F.hasCoin=false; F.hasKey=true;
+      F.hasCoin=false; F.hasKey=true; F.hasBottle=true;
       pushChat([{me:1,read:1,t:"りっちゃんのラムネ買ったよ"},
                 {t:"よしよし。……ん、なんか変な音しなかった？"}]);
     },
-    text:`100円玉を入れて、<b style="color:#7da4e0">２</b>のボタンを押す。<br>ガコン——ラムネソーダが落ちてきた。<br>……ボトルの下に、<b>小さな銀色の鍵</b>がテープで貼りつけてある。`,
+    text:`100円玉を入れて、<b style="color:#7da4e0">２</b>のボタンを押す。<br>ガコン——ラムネソーダが落ちてきた。瓶は氷みたいに冷たい。<br>ふると、中で<b>ビー玉</b>が、からんと鳴った。<br>……ボトルの下に、<b>小さな銀色の鍵</b>がテープで貼りつけてある。`,
     choices:()=>[[ "鍵をはがして、持っていく","platform" ]] },
 
   namesign:{ img:"signclose",
@@ -820,14 +820,33 @@ const NODES = {
     choices:()=>[[ "改札へ向かう","gates" ],["窓口の前へ","office"]] },
 
   gates:{ img:"gates",
-    text:()=>F.hasTicket
-      ?`真ん中の改札の<b>ICリーダー</b>だけ、青く光っている。<br>ポケットの中で、ハートのカードがあたたかい。`
-      :`改札は電源が落ちている。<br>真ん中の一台、<b>ICリーダー</b>だけが青く光っている。<br>カードがなければ、開きそうにない。<br>扉のむこうから、オレンジ色の灯りがもれている。`,
+    text:()=>{
+      if(!F.hasTicket) return `改札は電源が落ちている。<br>真ん中の一台のICリーダー——その中央が、<b>まるく、くぼんでいる</b>。<br><span class="whisper">なにかが、はまっていたみたいに。</span><br>扉のむこうから、オレンジ色の灯りがもれている。`;
+      if(F.marbleSet) return `ビー玉のはまったリーダーが、<b>青く</b>息づいている。<br>ポケットの中で、ハートのカードがあたたかい。`;
+      if(F.hasMarble) return `リーダーのくぼみと、手のなかの<b>ビー玉</b>。<br>……大きさが、ぴったりだ。`;
+      return `カードをかざしても、リーダーは沈黙している。<br>中央の<b>まるいくぼみ</b>——ガラス玉くらいの大きさ。<br><span class="whisper">ラムネの瓶の中で、からん、と音がした気がした。</span>`;
+    },
     choices:()=>[
-      F.hasTicket&&["ハートのカードを、リーダーにかざす","cardTap"],
+      (F.hasTicket&&F.marbleSet)&&["ハートのカードを、リーダーにかざす","cardTap"],
+      (F.hasTicket&&!F.marbleSet&&F.hasMarble)&&["ビー玉を、くぼみにはめる","setMarble"],
+      (F.hasTicket&&!F.marbleSet&&!F.hasMarble&&F.hasBottle)&&["ラムネの瓶を——割る","breakBottle"],
       ["灯りのほうを見つめる","doorway"],
       ["ホームへもどる","platform"],
     ].filter(Boolean)},
+
+  breakBottle:{ img:"gates", enter(){
+      F.hasMarble=true; F.hasBottle=false;
+      smash();
+      pushChat([{me:1,read:1,t:"ごめん、りっちゃんのラムネ割った"},
+                {t:"！？"},
+                {t:"……まあいい。ビー玉、とれた？"}]);
+    },
+    text:`ホームの端で、ラムネの瓶を——割った。<br><br>ガラスの音が、だれもいない駅にひびく。<br>ソーダが点字ブロックを濡らして、<br>転がり出た<b>ビー玉</b>を、拾い上げた。<br><span class="whisper">まだ、冷たい。</span>`,
+    choices:()=>[[ "改札にもどる","gates" ]] },
+
+  setMarble:{ img:"gates", enter(){ F.marbleSet=true; blip(1200); },
+    text:`ビー玉を、くぼみに——<b>ぴたり</b>。<br><br>リーダーが、青く息を吹き返した。<br><span class="whisper">最初から、これを待っていたみたいに。</span>`,
+    choices:()=>[[ "ハートのカードをかざす","cardTap" ],["一歩さがる","gates"]] },
 
   cardTap:{ img:"gates", enter(){
       pushChat([{me:1,read:1,t:"かざすよ",time:"23:58"}]);
@@ -1027,6 +1046,21 @@ function ringBuzz(){
     o.connect(f); f.connect(g); g.connect(AC.destination);
     o.start(t0); o.stop(t0+0.32);
   }
+}
+function smash(){
+  if(!AC||!sndOn) return;
+  const buf=AC.createBuffer(1, AC.sampleRate*0.35, AC.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.2);
+  const s=AC.createBufferSource(); s.buffer=buf;
+  const f=AC.createBiquadFilter(); f.type="highpass"; f.frequency.value=1700;
+  const g=AC.createGain(); g.gain.value=0.14;
+  s.connect(f); f.connect(g); g.connect(AC.destination); s.start();
+  const o=AC.createOscillator(), og=AC.createGain();
+  o.type="sine"; o.frequency.value=2600;
+  og.gain.setValueAtTime(0.05,AC.currentTime);
+  og.gain.exponentialRampToValueAtTime(0.0008,AC.currentTime+0.5);
+  o.connect(og); og.connect(AC.destination); o.start(); o.stop(AC.currentTime+0.5);
 }
 function blip(f){
   if(!AC||!sndOn) return;
