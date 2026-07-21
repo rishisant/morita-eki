@@ -354,7 +354,7 @@ const CONFIG = {
   herName: "紗季",
   bfName: "りし",
   finalCode: "0719",           // ★ 2026年7月19日 — りしが来た日
-  codeHint: "りしが来た日（4つの数字で）", // 最後のヒント
+  codeHint: "ふたりの、はじまりの日", // 最後のヒント(暗号めかす)
   finalMessage: [              // ★ 改札のむこうで渡す手紙(自由に書きかえてOK)
     "紗季へ",
     "2026年7月19日。",
@@ -364,13 +364,13 @@ const CONFIG = {
     "これからも、ふたりでいろんな駅に降りよう。",
     "——森田駅より、愛をこめて。",
   ],
-  voice: {                     // ★ 音声メッセージ(任意): 音声ファイルを渡してくれたら組み込みます
-    src: "",                     //   空のままなら音声バブルは表示されません
-    duration: "0:08",
-    captions: [                  //   [開始秒, 終了秒, "字幕"]
-      [0, 3, "……もりた？"],
-      [3, 8, "むかえに来たよ。ゆっくりでいいからね。"],
-    ],
+  voice1: {                    // ★ ボイス1: メッセージ見た/迎えに行く/ラムネ頼む
+    src: "", duration: "0:15",
+    captions: [ [0,4,"紗季、メッセージ見たよ。大丈夫？"], [4,10,"いまから迎えに行くから。"], [10,15,"ついでに自販機で、ラムネソーダ買っといて。俺のぶん。"] ],
+  },
+  voice2: {                    // ★ ボイス2: 駅に入れない/外で待ってる/暗号ヒント
+    src: "", duration: "0:20",
+    captions: [ [0,5,"駅、着いたけど……中に入れない。"], [5,12,"改札の番号——たぶん、ふたりのはじまりの日だ。"], [12,20,"扉のむこうで待ってる。もうすぐ会えるよ。"] ],
   },
 };
 /* ================================================================ */
@@ -394,12 +394,12 @@ const IMG = {
 };
 /* ---------------- state ---------------- */
 const F = {
-  hasPhone:false, hasKey:false, hasMemo:false, chestOpen:false,
+  hasPhone:false, hasCoin:false, hasKey:false, hasMemo:false, chestOpen:false,
   sawVending:false, sawBoard:false, lockerOpen:false,
   hasTicket:false, ticketIn:false,
   chat:[], unread:0,
 };
-const LOCKER_CODE = "275";
+const LOCKER_CODE = "2";
 
 /* ---------------- chat ---------------- */
 const $=id=>document.getElementById(id);
@@ -419,8 +419,8 @@ const AVATAR_HTML = AVATAR_SRC && !AVATAR_SRC.includes("{{") ? `<img src="${AVAT
 function bubbleRow(m){
   if(m.sys) return `<div class="bub sys">${m.t}</div>`;
   if(m.voice) return `<div class="crow yo"><span class="avatar">${AVATAR_HTML}</span>
-    <div class="bub yo voice" onclick="playVoice()"><span class="play">▶</span>
-    <span class="wave">▮▯▮▮▯▮▯▮</span> ${CONFIG.voice.duration}</div></div>`;
+    <div class="bub yo voice" onclick="playVoice('${m.voice}')"><span class="play">▶</span>
+    <span class="wave">▮▯▮▮▯▮▯▮</span> ${CONFIG[m.voice].duration}</div></div>`;
   if(m.me) return `<div class="crow me"><span class="meta">${m.read?"Read":""}${m.time?"<br>"+m.time:""}</span>
     <div class="bub me">${m.t}</div></div>`;
   return `<div class="crow yo"><span class="avatar">${AVATAR_HTML}</span>
@@ -437,18 +437,19 @@ function openChat(){
   const log=$("chatlog"); if(log) log.scrollTop=log.scrollHeight;
 }
 let voiceAudio=null;
-function playVoice(){
-  if(!CONFIG.voice.src) return;
+function playVoice(which){
+  const V=CONFIG[which||"voice1"];
+  if(!V||!V.src) return;
   if(voiceAudio){ voiceAudio.pause(); voiceAudio=null; }
   closeModal();
   const vo=$("voiceover"), cap=$("vcaption");
   vo.classList.add("on"); vo.classList.remove("done"); vo.onclick=null;
   cap.textContent="……";
   if(bgmEl) bgmEl.volume=0.08*(OPT.bgm/100);
-  voiceAudio=new Audio(CONFIG.voice.src);
+  voiceAudio=new Audio(V.src);
   voiceAudio.ontimeupdate=()=>{
     const tm=voiceAudio.currentTime;
-    const c=CONFIG.voice.captions.find(c=>tm>=c[0]&&tm<c[1]);
+    const c=V.captions.find(c=>tm>=c[0]&&tm<c[1]);
     if(c) cap.textContent=c[2];
   };
   voiceAudio.onended=()=>{
@@ -537,14 +538,18 @@ const NODES = {
   getPhone:{ img:"benchclose_nophone", enter(){
       F.hasPhone=true;
       F.chat.push({sys:1,t:"22:47"},
-        {t:"もりた、いまどこ？もう着く？",time:"22:47"},
-        {t:"……え、まだ森田駅？終電行ったよね"},
-        {t:"改札の外まで迎えに行く。そこで待ってて"},
-        {t:"なんか今夜の森田駅、様子が変だ。気をつけて",time:"23:02"});
+        {me:1,read:1,t:"りし、いまいい？"},
+        {me:1,read:1,t:"へんなこと言うけど……気づいたら森田駅にいた"},
+        {me:1,read:1,t:"どうやって来たのか、記憶がない",time:"22:47"},
+        {me:1,read:1,t:"駅にはだれもいない。こわい"},
+        {t:"！？"},
+        {t:"大丈夫。落ち着いて。いまから迎えに行く"},
+        {t:"スマホ、手放さないで。そこにいて",time:"23:02"});
+      if(CONFIG.voice1.src) F.chat.push({voice:"voice1"});
       F.unread=1;
       const pb=$("phonebtn"); pb.classList.add("show","unread");
     },
-    text:`——自分のスマホだ。<br>どうしてベンチの上に。ポケットに入れていたはずなのに。<br>画面には、<b>${CONFIG.bfName}</b>からのメッセージが並んでいる。`,
+    text:`——自分のスマホだ。どうしてベンチの上に。<br>画面には、<b>自分が送ったらしいメッセージ</b>が残っている。<br><span class="whisper">……送った記憶が、ない。</span>`,
     choices:()=>[
       ["メッセージを読む","__chat"],
       ["ポケットにしまう","platform"],
@@ -559,18 +564,30 @@ const NODES = {
       :[["フタを開ける","bucketOpen"],["さわらないでおく","platform"]]},
 
   bucketOpen:{ img:()=>F.hasPhone?"benchclose_bucketopen":"benchclose_bucketopen_phone", enter(){
-      F.hasKey=true;
-      pushChat([{me:1,read:1,t:"りし、ベンチに変なバケツあるんだけど"},
-                {me:1,read:1,t:"餌バケツって書いてある"},
+      F.hasCoin=true;
+      pushChat([{me:1,read:1,t:"ベンチのバケツに100円入ってたんだけどw"},
                 {t:"なにそれw"},
-                {t:"中に小さい鍵…？駅員室のカウンターに、木の箱なかったっけ"}]);
+                {t:"ちょうどいいじゃん。それでラムネ買えるよ"}]);
     },
-    text:`思いきってフタを開けた。<br>エサは入っていない。<br>かわりに、<b>小さな銀色の鍵</b>がひとつ、底に光っていた。<br><span class="whisper">——ポケットの中で、スマホが震えた。</span>`,
+    text:`思いきってフタを開けた。<br>エサは入っていない。<br>かわりに、<b>100円玉</b>がひとつ、底に光っていた。<br><span class="whisper">——だれかが、置いていったみたいに。</span>`,
     choices:()=>[[ "鍵を持って、あたりを見る","platform" ]] },
 
   vending:{ img:"vendclose", enter(){ F.sawVending=true; },
-    text:`自販機のボタンに、小さく番号がふってある。<br><b style="color:#e0607d">7</b> いちごミルク　<b style="color:#7da4e0">2</b> ラムネソーダ　<b style="color:#e0c060">5</b> はちみつレモン<br>お金を入れても、なにも出てこない。<br><span class="whisper">灯りだけが、じっとこちらを見ている。</span>`,
-    choices:()=>[[ "はなれる","platform" ]] },
+    text:()=>F.hasKey
+      ?`自販機。ラムネソーダのランプだけ、消えている。<br><span class="whisper">もう、用は済んだ。</span>`
+      :`自販機のボタンに、小さく番号がふってある。<br><b style="color:#e0607d">7</b> いちごミルク　<b style="color:#7da4e0">2</b> ラムネソーダ　<b style="color:#e0c060">5</b> はちみつレモン<br><span class="whisper">灯りだけが、じっとこちらを見ている。</span>`,
+    choices:()=>[
+      (F.hasCoin&&!F.hasKey)&&["100円を入れて、ラムネソーダを買う","vendBuy"],
+      ["はなれる","platform"],
+    ].filter(Boolean)},
+
+  vendBuy:{ img:"vendclose", enter(){
+      F.hasCoin=false; F.hasKey=true;
+      pushChat([{me:1,read:1,t:"ラムネ買った"},
+                {t:"よしよし。……ん、なんか変な音しなかった？"}]);
+    },
+    text:`100円玉を入れて、<b style="color:#7da4e0">２</b>のボタンを押す。<br>ガコン——ラムネソーダが落ちてきた。<br>……ボトルの下に、<b>小さな銀色の鍵</b>がテープで貼りつけてある。`,
+    choices:()=>[[ "鍵をはがして、持っていく","platform" ]] },
 
   namesign:{ img:"signclose",
     text:`駅名標。<br>『<b>← 理志町　　森田　　さんたなむ →</b>』<br>……となりの駅、こんな名前だったっけ。<br><span class="whisper">知っている名前の、気がする。</span>`,
@@ -613,26 +630,18 @@ const NODES = {
 
   chestOpen:{ img:"board_open", enter(){
       F.chestOpen=true; F.hasMemo=true;
-      pushChat([{me:1,read:1,t:"箱あけたらメモ入ってた。なぞなぞ？"},
-                {t:"『自販機に数字、のりばあんないに順番』か……"},
-                {t:"もりたなら解ける。ゆっくりでいいよ"}]);
-      if(CONFIG.voice.src){
-        setTimeout(()=>{
-          ringBuzz();
-          pushChat([{t:"……あ、それとさ。いまボイスメッセージ送った"},
-                    {t:"だいじなことだから、ちゃんと聞いて",time:"23:22"},
-                    {voice:1}]);
-          say("——ポケットの中で、スマホが震えて、鳴った。<br><b>ボイスメッセージ</b>だ。");
-        }, 2600);
-      }
+      pushChat([{me:1,read:1,t:"駅員室の箱あけたらメモ入ってた"},
+                {t:"なんて書いてある？"},
+                {me:1,read:1,t:"『ロッカーの番号は、あの人の好きな飲みもの』",time:"23:22"},
+                {t:"……俺の好きなやつ、知ってるよね"}]);
     },
-    text:`鍵が、ぴたりとはまった。<br>中には——<b>駅員のメモ</b>。<br><br>『自販機には<b>数字</b>が、<br>　のりばあんないには<b>順番</b>が。』<br><span class="whisper">——スマホが震えた。</span>`,
+    text:`鍵が、ぴたりとはまった。<br>中には——<b>駅員のメモ</b>。<br><br>『コインロッカーの番号は、<br>　<b>あの人の好きな飲みもの</b>。』<br><span class="whisper">あの人って、だれのことだろう。</span>`,
     choices:()=>[[ "窓口の前にもどる","office" ]] },
 
   lockersIntro:{ img:()=>F.lockerOpen?"lockers_open":"lockers_closed",
     text:()=>F.lockerOpen
-      ?`開いたままの<b>275番ロッカー</b>。<br>もう、なにも入っていない。`
-      :`コインロッカーの並ぶ一角。ぜんぶ使用中だ。<br><span class="whisper">こんな時間に、だれの荷物だろう。</span><br>ひとつだけ——<b>275番</b>のロッカーに、ダイヤル錠がついている。`,
+      ?`開いたままのロッカー。<br>もう、なにも入っていない。`
+      :`コインロッカーの並ぶ一角。ぜんぶ使用中だ。<br><span class="whisper">こんな時間に、だれの荷物だろう。</span><br>ひとつだけ、<b>ダイヤル錠</b>のついたロッカーがある。数字は、ひと桁。`,
     choices:()=>F.lockerOpen
       ?[["窓口の前へ","office"],["改札へ向かう","gates"]]
       :[
@@ -642,17 +651,27 @@ const NODES = {
       ]},
 
   graffiti:{ img:()=>F.lockerOpen?"lockers_open":"lockers_closed",
-    text:`料金表の下に、小さな落書き。<br>『<b>いろと、じゅんばん。</b>』`,
+    text:`料金表の下に、小さな落書き。<br>『<b>のみものと、おなじ。</b>』`,
     choices:()=>[[ "ロッカーの前にもどる","lockersIntro" ]] },
 
   lockerLoot:{ img:"lockers_open", enter(){
       F.lockerOpen=true; F.hasTicket=true;
       pushChat([{me:1,read:1,t:"ロッカーからハートの切符出てきたんだけど！？"},
-                {t:"切符出てきた！？ハートのやつ？"},
                 {t:"……それ、俺が用意したやつだ"},
-                {t:"改札まで来て。番号は——ふたりなら分かるはず",time:"23:41"}]);
+                {t:"改札まで持ってきて",time:"23:41"}]);
+      if(CONFIG.voice2.src){
+        setTimeout(()=>{
+          ringBuzz();
+          pushChat([{t:"いま森田駅に着いた"},
+                    {t:"……おかしい。改札、外から開かない"},
+                    {t:"閉まってるはずの駅なのに、電気がついてる"},
+                    {t:"ボイス送った。聞いて",time:"23:44"},
+                    {voice:"voice2"}]);
+          say("——スマホが震えて、鳴った。<br>"+CONFIG.bfName+"から、<b>ボイスメッセージ</b>。");
+        }, 2600);
+      }
     },
-    text:`ガチャン、と音がして扉が開いた。<br>中には——<b>ハートのかたちの記念切符</b>と、手紙の切れ端。<br><br>切符の行き先：『さんたなむ → 森田』<br>切れ端：『改札の番号は、<b>${CONFIG.codeHint}</b>。（4つの数字で）』<br><span class="whisper">——スマホが震えた。</span>`,
+    text:`ガチャン、と音がして扉が開いた。<br>中には——<b>ハートのかたちの記念切符</b>と、手紙の切れ端。<br><br>切符の行き先：『さんたなむ → 森田』<br>切れ端：『改札の番号は——<b>4つの数字</b>。』<br><span class="whisper">——スマホが震えた。</span>`,
     choices:()=>[[ "改札へ向かう","gates" ],["窓口の前へ","office"]] },
 
   gates:{ img:"gates",
@@ -740,10 +759,10 @@ function typeText(el, done){
 }
 
 /* ---------------- locker dials ---------------- */
-let dialVals=[0,0,0];
+let dialVals=[0];
 function openDials(){
-  openModal(`<h3>コインロッカー 275ばん</h3>
-    <div class="dials">${[0,1,2].map(i=>`
+  openModal(`<h3>コインロッカーのダイヤル</h3>
+    <div class="dials">${[0].map(i=>`
       <div class="dial">
         <button onclick="spinDial(${i},1)" aria-label="上へ">▲</button>
         <div class="num" id="d${i}">${dialVals[i]}</div>
