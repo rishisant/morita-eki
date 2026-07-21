@@ -1,7 +1,7 @@
 <title>森田駅</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0b0e15; --ink2:#141926; --ink3:#202839;
@@ -281,6 +281,61 @@
     #chathead{font-size:.85rem; padding:.5rem .8rem}
     #inputbar .field{font-size:.72rem}
   }
+
+  /* ================= RETRO SKIN (golden-age JRPG windows) ================= */
+  :root{ --pixel:"DotGothic16",var(--sans); --win:#0a0e1e; --winborder:#efe9d6 }
+  #storybox,#modal,#choices,#toast{
+    background:rgba(8,11,24,.93) !important;
+    border:3px solid var(--winborder) !important; border-radius:10px !important;
+    box-shadow:inset 0 0 0 3px #05070f, 0 6px 0 rgba(0,0,0,.35) !important;
+    backdrop-filter:none !important; -webkit-backdrop-filter:none !important}
+  #storybox{font-family:var(--pixel); font-size:.95rem; line-height:1.9; padding:1rem 1.2rem}
+  #storybox b{color:var(--amber)}
+  #locchip,#gearbtn,#mutebtn,#phonebtn,#menubtn{
+    font-family:var(--pixel) !important; background:rgba(8,11,24,.93) !important;
+    border:2px solid var(--winborder) !important; border-radius:6px !important;
+    color:#efe9d6 !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+    box-shadow:inset 0 0 0 2px #05070f !important}
+  #menubtn{width:auto !important; height:auto !important; padding:.6rem 1.1rem !important;
+    font-size:.9rem !important; letter-spacing:.15em; animation:none !important}
+  #menu.open #menubtn{transform:none !important; color:var(--amber) !important}
+  #menubtn.ready{animation:blinkborder 1.2s steps(2) infinite !important}
+  @keyframes blinkborder{50%{border-color:var(--amber) !important; color:var(--amber)}}
+  #choices{flex-direction:column !important; gap:0 !important; padding:.5rem .4rem !important;
+    min-width:15rem; max-width:min(24rem, calc(100vw - 10rem)) !important}
+  #menu:not(.open) #choices{border:none !important; box-shadow:none !important; background:none !important}
+  .choice{font-family:var(--pixel) !important; font-size:.95rem !important; font-weight:400 !important;
+    background:none !important; border:none !important; border-radius:0 !important;
+    box-shadow:none !important; backdrop-filter:none !important;
+    padding:.42rem .8rem .42rem 1.7rem !important; position:relative; color:#efe9d6 !important;
+    translate:0 0 !important}
+  .choice .arr{position:absolute; left:.5rem; opacity:0; color:var(--amber)}
+  .choice:hover{color:var(--amber) !important}
+  .choice:hover .arr{opacity:1; animation:curblink .8s steps(2) infinite}
+  @keyframes curblink{50%{opacity:.2}}
+  .btn{font-family:var(--pixel) !important; font-weight:400 !important; font-size:1rem !important;
+    background:#efe9d6 !important; color:#0a0e1e !important; border:3px solid #0a0e1e !important;
+    border-radius:6px !important; box-shadow:0 0 0 2px #efe9d6, 0 5px 0 rgba(0,0,0,.4) !important;
+    letter-spacing:.2em}
+  .btn:hover{background:var(--amber) !important; filter:none !important}
+  .btn.ghost{background:rgba(8,11,24,.93) !important; color:#efe9d6 !important;
+    border:2px solid var(--winborder) !important; box-shadow:inset 0 0 0 2px #05070f !important}
+  #modal h3{font-family:var(--pixel); color:#efe9d6; letter-spacing:.2em}
+  .padgrid button,.dial button{font-family:var(--pixel) !important; border-radius:4px !important;
+    background:#0a0e1e !important; border:2px solid var(--winborder) !important; color:#efe9d6 !important}
+  .padgrid button:hover,.dial button:hover{color:var(--amber) !important; border-color:var(--amber) !important}
+  .dial .num,#code-display{font-family:var(--pixel) !important; border-radius:4px !important;
+    border:2px solid var(--winborder) !important; color:var(--amber) !important}
+  .optrow label{font-family:var(--pixel)}
+  #titleright .lead{font-family:var(--pixel); font-size:clamp(.7rem,1.5vh + .3rem,.88rem)}
+  #vcaption{font-family:var(--pixel)}
+  #ending h2,#ending .clear{font-family:var(--pixel)}
+  /* CRT scanlines */
+  #vig::after{content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px)}
+  /* calm the modern flourishes */
+  #bg{animation:none}
+  #locchip{letter-spacing:.2em}
 </style>
 
 <div id="app">
@@ -324,7 +379,7 @@
       <div id="storybox"></div>
     </div>
     <div id="menu">
-      <button id="menubtn" aria-label="こうどうをえらぶ">▸</button>
+      <button id="menubtn" aria-label="こうどうをえらぶ">コマンド</button>
       <div id="choices"></div>
     </div>
   </div>
