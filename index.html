@@ -490,7 +490,7 @@ const CONFIG = {
   },
   voice3: {                    // ★ ボイス3 (未収録): ビー玉をはめた直後。最後の謎の答え
     src: "", duration: "0:20",
-    captions: [ [0,6,"（ボイス3・未収録）"], [6,20,"……"] ],
+    captions: [ [0,6,"ラムネはいいよ、また買えばいい。"], [6,14,"それよりその改札——丸い口金に、何か詰めると非常モードになるんだ。"], [14,20,"ICカードがあれば、いつでも出られる。ビー玉……ぴったりかも。"] ],
     wave: [0.3,0.6,0.4,0.8,0.5,0.2,0.7,0.4,0.6,0.9,0.3,0.5,0.7,0.2,0.6,0.4,0.8,0.5,0.3,0.6,0.4,0.7,0.5,0.2,0.6,0.8,0.4,0.5,0.3,0.2],
   },
 };
@@ -521,7 +521,7 @@ const IMG = {
 const F = {
   hasPhone:false, hasCoin:false, hasKey:false, hasMemo:false, chestOpen:false,
   sawVending:false, sawBoard:false, lockerOpen:false,
-  hasTicket:false, hasBottle:false, hasMarble:false, marbleSet:false, sawSocket:false,
+  hasTicket:false, hasBottle:false, hasMarble:false, marbleSet:false, sawSocket:false, toldRamune:false,
   chat:[], unread:0,
 };
 const LOCKER_CODE = "2";
@@ -842,8 +842,9 @@ const NODES = {
       return `ハートのカードをかざしても——リーダーは、沈黙している。<br><span class="whisper">こわれている？　それとも、なにかが足りない？</span>`;
     },
     choices:()=>[
-      (F.hasTicket&&F.marbleSet)&&["ハートのカードを、リーダーにかざす","cardTap"],
+      (F.hasTicket&&F.marbleSet)&&["Saicaを、リーダーにかざす","cardTap"],
       (F.hasTicket&&!F.marbleSet)&&["リーダーを、よく見る","readerLook"],
+      (F.hasMarble&&F.toldRamune&&!F.marbleSet&&F.sawSocket)&&["ビー玉を、口金に詰める","setMarble"],
       ["灯りのほうを見つめる","doorway"],
       ["ホームへもどる","platform"],
     ].filter(Boolean)},
@@ -854,35 +855,43 @@ const NODES = {
       ?`ビー玉のはまったリーダーが、青くやわらかく光っている。<br><span class="whisper">最初から、これを待っていたみたいに。</span>`
       :`顔を近づけて、はじめて気づいた。<br>リーダーの中央に——<b>まるい、くぼみ</b>。<br>ガラス玉くらいの、大きさ。<br><span class="whisper">……カバンの中で、からん、と音がした。</span>`,
     choices:()=>[
-      (F.hasBottle&&!F.hasMarble)&&["ラムネの瓶を——割る","breakBottle"],
-      (F.hasMarble&&!F.marbleSet)&&["ビー玉を、くぼみにはめる","setMarble"],
-      F.marbleSet&&["ハートのカードをかざす","cardTap"],
-      ["改札の前にもどる","gates"],
+      (F.hasMarble&&F.toldRamune&&!F.marbleSet)&&["ビー玉を、口金に——詰める","setMarble"],
+      F.marbleSet&&["Saicaをかざす","cardTap"],
+      [(F.hasBottle&&!F.hasMarble)?"改札の前に、もどろうとする":"改札の前にもどる",
+       (F.hasBottle&&!F.hasMarble)?"dropBottle":"gates"],
     ].filter(Boolean)},
 
-  breakBottle:{ img:"gates", enter(){
+  dropBottle:{ img:"gates", enter(){
       F.hasMarble=true; F.hasBottle=false;
       smash();
-      pushChat([{me:1,read:1,t:"ごめん、りっちゃんのラムネ割った"},
-                {t:"！？"},
-                {t:"……まあいい。ビー玉、とれた？"}]);
     },
-    text:`ホームの端で、ラムネの瓶を——割った。<br><br>ガラスの音が、だれもいない駅にひびく。<br>ソーダが点字ブロックを濡らして、<br>転がり出た<b>ビー玉</b>を、拾い上げた。<br><span class="whisper">まだ、冷たい。</span>`,
-    choices:()=>[[ "リーダーのところへ","readerLook" ]] },
+    text:`ふりむいた、そのとき——<br><br>がしゃん。<br><br>かばんからラムネの瓶がすべり落ちて、割れた。<br>ソーダが点字ブロックを濡らして、<br><b>ビー玉</b>だけが、ころころと足元に転がってくる。<br><span class="whisper">……ひろった。まだ、冷たい。</span>`,
+    choices:()=>[[ "りっちゃんに、報告する","reportRamune" ],["だまって、ひろっておく","gates"]] },
 
-  setMarble:{ img:"gateclose_marble", enter(){
-      F.marbleSet=true; blip(1200);
-      if(CONFIG.voice3.src){
-        setTimeout(()=>{
+  reportRamune:{ img:"gates", enter(){
+      F.toldRamune=true;
+      pushChat([{me:1,read:1,t:"ごめん、りっちゃんのラムネ割っちゃった"},
+                {me:1,read:1,t:"ビー玉だけ生きてる"},
+                {t:"！？"}]);
+      setTimeout(()=>{
+        if(CONFIG.voice3.src){
           ringBuzz();
-          pushChat([{t:"——いま、駅の灯りが一瞬ぜんぶ点いた"},
-                    {t:"そっちで何かした？",time:"23:59"},
-                    {t:"最後のボイス送る。よく聞いて"},
+          pushChat([{t:"……いや、それ、ちょうどいいかも"},
+                    {t:"最後のボイス送る。よく聞いて",time:"23:59"},
                     {voice:"voice3"}]);
           say("——スマホが鳴った。<br>"+CONFIG.bfName+"から、<b>最後のボイスメッセージ</b>。");
-        }, 2400);
-      }
+        } else {
+          pushChat([{t:"……いや、それ、ちょうどいいかも"},
+                    {t:"その改札さ、丸い口金に何か詰めると非常モードになるんだ"},
+                    {t:"ICカードさえあれば、いつでも出られる",time:"23:59"},
+                    {t:"ビー玉——ぴったりだと思う"}]);
+        }
+      }, 2200);
     },
+    text:`スマホを取り出して、正直に報告した。<br><span class="whisper">怒られるだろうか。<br>……画面の向こうで、既読がついた。</span>`,
+    choices:()=>[[ "返事を待ちながら、改札を見る","gates" ]] },
+
+  setMarble:{ img:"gateclose_marble", enter(){ F.marbleSet=true; blip(1200); },
     text:`ビー玉を、くぼみに——<b>ぴたり</b>。<br><br>リーダーが、青く息を吹き返した。<br><span class="whisper">最初から、これを待っていたみたいに。</span>`,
     choices:()=>[[ "ハートのカードをかざす","cardTap" ],["一歩さがる","gates"]] },
 
