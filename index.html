@@ -616,6 +616,15 @@ const NODES = {
       pushChat([{me:1,read:1,t:"箱あけたらメモ入ってた。なぞなぞ？"},
                 {t:"『自販機に数字、のりばあんないに順番』か……"},
                 {t:"もりたなら解ける。ゆっくりでいいよ"}]);
+      if(CONFIG.voice.src){
+        setTimeout(()=>{
+          ringBuzz();
+          pushChat([{t:"……あ、それとさ。いまボイスメッセージ送った"},
+                    {t:"だいじなことだから、ちゃんと聞いて",time:"23:22"},
+                    {voice:1}]);
+          say("——ポケットの中で、スマホが震えて、鳴った。<br><b>ボイスメッセージ</b>だ。");
+        }, 2600);
+      }
     },
     text:`鍵が、ぴたりとはまった。<br>中には——<b>駅員のメモ</b>。<br><br>『自販機には<b>数字</b>が、<br>　のりばあんないには<b>順番</b>が。』<br><span class="whisper">——スマホが震えた。</span>`,
     choices:()=>[[ "窓口の前にもどる","office" ]] },
@@ -844,6 +853,21 @@ function audioInit(){
       ns.connect(nf); nf.connect(ambGain); ns.start();
     }
   }catch(e){}
+}
+function ringBuzz(){
+  if(!AC||!sndOn) return;
+  for(let p=0;p<3;p++){
+    const t0=AC.currentTime+p*0.45;
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.type="square"; o.frequency.value=170;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.linearRampToValueAtTime(0.05,t0+0.02);
+    g.gain.setValueAtTime(0.05,t0+0.22);
+    g.gain.exponentialRampToValueAtTime(0.0008,t0+0.3);
+    const f=AC.createBiquadFilter(); f.type="lowpass"; f.frequency.value=900;
+    o.connect(f); f.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0+0.32);
+  }
 }
 function blip(f){
   if(!AC||!sndOn) return;
