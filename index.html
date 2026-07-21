@@ -237,6 +237,17 @@
   .padgrid button,.dial button{border-radius:12px; background:rgba(40,48,64,.55);
     border:1px solid var(--hairline)}
   .padgrid button:hover{background:rgba(56,66,86,.7)}
+
+  /* ---- button contrast fix ---- */
+  .btn{font-size:1.08rem; font-weight:700; letter-spacing:.18em; text-indent:.18em;
+    padding:.95rem 2.5rem; background:var(--neon); color:#07100d;
+    box-shadow:0 0 0 1px rgba(255,255,255,.25) inset, 0 8px 28px rgba(159,216,200,.35)}
+  .btn:hover{filter:brightness(1.12)}
+  .btn.ghost{background:rgba(44,52,68,.72); color:#ffffff; font-weight:600;
+    border:1.5px solid rgba(255,255,255,.55); box-shadow:none; text-indent:0; letter-spacing:.1em}
+  .btn.ghost:hover{background:rgba(60,70,90,.85); border-color:#fff}
+  .choice{color:#fff; font-weight:500; border-color:rgba(255,255,255,.3)}
+  #titleright .btnrow{gap:1rem}
 </style>
 
 <div id="app">
