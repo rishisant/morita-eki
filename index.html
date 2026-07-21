@@ -694,6 +694,12 @@ const NODES = {
     ]},
 
   bucket:{ img:()=>F.hasKey?(F.hasPhone?"benchclose_bucketopen":"benchclose_bucketopen_phone"):(F.hasPhone?"benchclose_nophone":"benchclose_full"),
+    enter(){
+      if(F.hasPhone) setTimeout(()=>{
+        pushChat([{t:"そういえばさ、ホームに自販機あるよね"},
+                  {t:"ラムネソーダ買っといてくれない？俺のぶん",time:"23:10"}]);
+      }, 1600);
+    },
     text:()=>F.hasKey
       ?`空っぽの餌バケツ。<br><span class="whisper">どこかの海の底のレストランを、思い出す。</span>`
       :`ベンチの上に、ぽつんと置かれた金属のバケツ。<br>……どう見ても<b>餌バケツ</b>だ。なぜ駅に。<br><span class="whisper">どこかで見たことがある気がする。海の底で。</span>`,
@@ -703,10 +709,10 @@ const NODES = {
 
   bucketOpen:{ img:()=>F.hasPhone?"benchclose_bucketopen":"benchclose_bucketopen_phone", enter(){
       F.hasCoin=true;
-      pushChat([{me:1,read:1,t:"ベンチのバケツに100円入ってたんだけどw"},
-                {t:"なにそれw"},
-                {t:"あ、ちょうどいいじゃん"},
-                {t:"ついでにさ、それでラムネソーダ買っといて。俺のぶん"}]);
+      pushChat([{me:1,read:1,t:"財布ないんだけど……と思ったら"},
+                {me:1,read:1,t:"バケツの中に100円入ってた"},
+                {t:"は？w"},
+                {t:"……まあ、ちょうどいいじゃん。それで買えるよ"}]);
     },
     text:`思いきってフタを開けた。<br>エサは入っていない。<br>かわりに、<b>100円玉</b>がひとつ、底に光っていた。<br><span class="whisper">——だれかが、置いていったみたいに。</span>`,
     choices:()=>[[ "鍵を持って、あたりを見る","platform" ]] },
