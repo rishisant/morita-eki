@@ -386,6 +386,20 @@
   #notif .ntxt b{font-size:.68rem; color:var(--neon); font-weight:600}
   #notif .ntxt span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   @media (prefers-reduced-motion: reduce){ #notif{transition:none} }
+
+  /* ---- command toggle: open list hides the text window ---- */
+  #menu{display:flex !important; position:absolute; left:1.2rem; bottom:1rem; z-index:6;
+    flex-direction:column-reverse; align-items:flex-start; gap:.55rem}
+  #menubtn{display:inline-block !important}
+  #choices{position:static !important; width:min(21rem, calc(100vw - 2.4rem)) !important;
+    height:auto !important; min-height:0 !important; overflow:visible !important;
+    flex-direction:column !important; flex-wrap:nowrap !important;
+    opacity:0 !important; pointer-events:none !important; translate:0 8px !important;
+    transition:opacity .18s, translate .18s}
+  #menu.open #choices{opacity:1 !important; pointer-events:auto !important; translate:0 0 !important}
+  #menu:not(.open) #choices{border:none !important; box-shadow:none !important; background:none !important}
+  #game.on:has(#menu.open) #hud{opacity:0; pointer-events:none}
+  #hud{transition:opacity .22s; padding-bottom:5.4rem}
 </style>
 
 <div id="app">
@@ -427,6 +441,9 @@
     <div id="locchip"></div>
     <div id="hud">
       <div id="storybox"></div>
+    </div>
+    <div id="menu">
+      <button id="menubtn" aria-label="こうどうをえらぶ">コマンド</button>
       <div id="choices"></div>
     </div>
   </div>
@@ -821,6 +838,8 @@ const NODES = {
 
 /* ---------------- engine ---------------- */
 const bgimg=$("bg"), storybox=$("storybox"), choicesEl=$("choices");
+const menuEl=$("menu"), menubtn=$("menubtn");
+menubtn.onclick=()=>{ blip(660); menuEl.classList.toggle("open"); menubtn.classList.remove("ready"); menubtn.blur(); };
 
 let current=null;
 function go(id){
@@ -846,9 +865,11 @@ function go(id){
       const b=document.createElement("button");
       b.className="choice";
       b.innerHTML=`<span class="arr">▸</span>${label}`;
-      b.onclick=()=>{ blip(880); go(dest); };
+      b.onclick=()=>{ blip(880); menuEl.classList.remove("open"); go(dest); };
       choicesEl.appendChild(b);
     }
+    menuEl.classList.remove("open");
+    menubtn.classList.add("ready");
   };
   typeText(storybox, buildChoices);
 }
